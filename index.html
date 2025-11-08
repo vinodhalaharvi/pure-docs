@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>AR Object Placer - Mobile</title>
+    <title>AR Object Placer - Compatible</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -108,16 +108,6 @@
             50% { opacity: 0.3; transform: scale(1.5); }
         }
 
-        .object-count {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        /* Bottom Sheet Controls */
         .bottom-sheet {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -125,7 +115,7 @@
             padding: 20px;
             box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
             color: #1e293b;
-            max-height: 50vh;
+            max-height: 60vh;
             overflow-y: auto;
         }
 
@@ -148,7 +138,6 @@
             font-weight: 700;
         }
 
-        /* Big Touch-Friendly Buttons */
         .btn {
             width: 100%;
             padding: 18px 24px;
@@ -198,7 +187,6 @@
             transform: none !important;
         }
 
-        /* Object Grid */
         .object-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -246,7 +234,6 @@
             color: #667eea;
         }
 
-        /* Size Slider */
         .slider-container {
             margin-top: 15px;
         }
@@ -295,100 +282,55 @@
             box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
         }
 
-        /* Stats */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .error-panel {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
             padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            color: white;
-        }
-
-        .stat-value {
-            font-size: 1.8em;
-            font-weight: 900;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Info Panel */
-        .info-panel {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 12px;
+            border-radius: 8px;
             margin-top: 15px;
+            color: #991b1b;
         }
 
-        .info-panel h4 {
-            color: #667eea;
+        .error-panel h4 {
             margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .error-panel p {
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        .error-panel ul {
+            margin: 10px 0 10px 20px;
+            font-size: 13px;
+        }
+
+        .error-panel li {
+            margin: 5px 0;
+        }
+
+        .diagnostic-info {
+            background: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            color: #075985;
+            font-size: 12px;
+        }
+
+        .diagnostic-info h4 {
+            margin-bottom: 8px;
             font-size: 14px;
         }
 
-        .info-panel p {
-            font-size: 13px;
-            color: #64748b;
-            line-height: 1.6;
+        .diagnostic-info p {
+            margin: 4px 0;
+            font-family: 'Courier New', monospace;
         }
 
-        /* Instructions Overlay */
-        .instructions-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .instructions-content {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 400px;
-            color: #1e293b;
-        }
-
-        .instructions-content h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-
-        .instructions-content ol {
-            margin: 20px 0;
-            padding-left: 20px;
-        }
-
-        .instructions-content li {
-            margin: 12px 0;
-            line-height: 1.6;
-        }
-
-        .instructions-content strong {
-            color: #667eea;
-        }
-
-        /* Floating Action Buttons */
         .fab-container {
             position: fixed;
             bottom: 80px;
@@ -426,11 +368,6 @@
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
 
-        .fab-info {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        }
-
-        /* Scrollbar */
         .bottom-sheet::-webkit-scrollbar {
             width: 6px;
         }
@@ -444,47 +381,6 @@
             background: #cbd5e1;
             border-radius: 10px;
         }
-
-        /* Loading State */
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading p {
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        /* GitHub Pages Info */
-        .github-info {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        .github-info a {
-            color: white;
-            text-decoration: underline;
-            font-weight: 600;
-        }
     </style>
 </head>
 <body>
@@ -494,61 +390,7 @@
     const { useState, useEffect, useRef, useCallback } = React;
 
     // ============================================
-    // FUNCTIONAL PROGRAMMING PRIMITIVES
-    // ============================================
-
-    const Monoid = {
-        Transform3D: {
-            empty: () => ({
-                position: { x: 0, y: 0, z: 0 },
-                rotation: { x: 0, y: 0, z: 0 },
-                scale: { x: 1, y: 1, z: 1 }
-            }),
-            concat: (a, b) => ({
-                position: {
-                    x: a.position.x + b.position.x,
-                    y: a.position.y + b.position.y,
-                    z: a.position.z + b.position.z
-                },
-                rotation: {
-                    x: a.rotation.x + b.rotation.x,
-                    y: a.rotation.y + b.rotation.y,
-                    z: a.rotation.z + b.rotation.z
-                },
-                scale: {
-                    x: a.scale.x * b.scale.x,
-                    y: a.scale.y * b.scale.y,
-                    z: a.scale.z * b.scale.z
-                }
-            })
-        },
-
-        Stats: {
-            empty: () => ({ objects: 0, placements: 0, interactions: 0 }),
-            concat: (a, b) => ({
-                objects: a.objects + b.objects,
-                placements: a.placements + b.placements,
-                interactions: a.interactions + b.interactions
-            })
-        }
-    };
-
-    const Functor = {
-        map: (f, arr) => arr.map(f),
-        map3D: (f, objects) => objects.map(obj => ({
-            ...obj,
-            transform: f(obj.transform)
-        }))
-    };
-
-    const Fold = {
-        foldl: (f, init, arr) => arr.reduce(f, init),
-        foldMap: (monoid, f, arr) =>
-            arr.map(f).reduce(monoid.concat, monoid.empty())
-    };
-
-    // ============================================
-    // AR SCENE MANAGER
+    // AR SCENE MANAGER (Compatible Version)
     // ============================================
 
     class ARSceneManager {
@@ -563,12 +405,6 @@
             this.renderer.xr.enabled = true;
 
             this.objects = [];
-            this.reticle = null;
-            this.hitTestSource = null;
-            this.hitTestSourceRequested = false;
-
-            this.stats = Monoid.Stats.empty();
-
             this.setupScene();
             this.animate();
         }
@@ -576,33 +412,15 @@
         setupScene() {
             this.camera.position.z = 5;
 
-            // Lighting using fold
-            const lights = [
-                { type: 'ambient', color: 0xffffff, intensity: 1 },
-                { type: 'directional', color: 0xffffff, intensity: 1, position: [5, 5, 5] }
-            ];
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+            this.scene.add(ambientLight);
 
-            Fold.foldl((_, light) => {
-                if (light.type === 'ambient') {
-                    this.scene.add(new THREE.AmbientLight(light.color, light.intensity));
-                } else if (light.type === 'directional') {
-                    const dirLight = new THREE.DirectionalLight(light.color, light.intensity);
-                    dirLight.position.set(...light.position);
-                    this.scene.add(dirLight);
-                }
-                return null;
-            }, null, lights);
-
-            // Create reticle for AR placement
-            const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
-            const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-            this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
-            this.reticle.matrixAutoUpdate = false;
-            this.reticle.visible = false;
-            this.scene.add(this.reticle);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(5, 5, 5);
+            this.scene.add(dirLight);
         }
 
-        addObject(type, size, transform = Monoid.Transform3D.empty()) {
+        addObject(type, size, position = { x: 0, y: 0, z: -2 }) {
             const geometries = {
                 cube: new THREE.BoxGeometry(0.2, 0.2, 0.2),
                 sphere: new THREE.SphereGeometry(0.1, 32, 32),
@@ -619,105 +437,31 @@
             });
 
             const mesh = new THREE.Mesh(geometry, material);
-
-            // Apply transform
-            mesh.position.set(transform.position.x, transform.position.y, transform.position.z);
-            mesh.rotation.set(transform.rotation.x, transform.rotation.y, transform.rotation.z);
+            mesh.position.set(position.x, position.y, position.z);
             mesh.scale.multiplyScalar(size);
 
             this.scene.add(mesh);
-            this.objects.push({ mesh, type, transform });
-
-            this.stats = Monoid.Stats.concat(this.stats, {
-                ...Monoid.Stats.empty(),
-                objects: 1,
-                placements: 1
-            });
+            this.objects.push({ mesh, type });
 
             return mesh;
         }
 
-        placeObjectAtReticle(type, size) {
-            if (this.reticle.visible) {
-                const transform = {
-                    position: {
-                        x: this.reticle.position.x,
-                        y: this.reticle.position.y,
-                        z: this.reticle.position.z
-                    },
-                    rotation: { x: 0, y: 0, z: 0 },
-                    scale: { x: 1, y: 1, z: 1 }
-                };
-
-                return this.addObject(type, size, transform);
-            }
-            return null;
-        }
-
         clearObjects() {
-            Fold.foldl((_, obj) => {
+            this.objects.forEach(obj => {
                 this.scene.remove(obj.mesh);
                 obj.mesh.geometry.dispose();
                 obj.mesh.material.dispose();
-                return null;
-            }, null, this.objects);
-
+            });
             this.objects = [];
         }
 
-        updateObjects(deltaTime) {
-            this.objects = Functor.map3D(
-                (transform) => ({
-                    ...transform,
-                    rotation: {
-                        x: transform.rotation.x,
-                        y: transform.rotation.y + deltaTime * 0.5,
-                        z: transform.rotation.z
-                    }
-                }),
-                this.objects
-            );
-
-            Fold.foldl((_, obj) => {
-                obj.mesh.rotation.y = obj.transform.rotation.y;
-                return null;
-            }, null, this.objects);
-        }
-
         animate() {
-            this.renderer.setAnimationLoop((time, frame) => {
-                if (frame) {
-                    // AR mode - handle hit testing
-                    const referenceSpace = this.renderer.xr.getReferenceSpace();
-                    const session = this.renderer.xr.getSession();
+            this.renderer.setAnimationLoop((time) => {
+                const deltaTime = time * 0.001;
 
-                    if (!this.hitTestSourceRequested && session) {
-                        session.requestReferenceSpace('viewer').then((referenceSpace) => {
-                            session.requestHitTestSource({ space: referenceSpace }).then((source) => {
-                                this.hitTestSource = source;
-                            });
-                        });
-                        this.hitTestSourceRequested = true;
-                    }
-
-                    if (this.hitTestSource && frame) {
-                        const hitTestResults = frame.getHitTestResults(this.hitTestSource);
-
-                        if (hitTestResults.length > 0) {
-                            const hit = hitTestResults[0];
-                            const pose = hit.getPose(referenceSpace);
-
-                            this.reticle.visible = true;
-                            this.reticle.matrix.fromArray(pose.transform.matrix);
-                        } else {
-                            this.reticle.visible = false;
-                        }
-                    }
-                } else {
-                    // Non-AR mode - animate objects
-                    const deltaTime = time * 0.001;
-                    this.updateObjects(deltaTime);
-                }
+                this.objects.forEach(obj => {
+                    obj.mesh.rotation.y += deltaTime * 0.5;
+                });
 
                 this.renderer.render(this.scene, this.camera);
             });
@@ -725,17 +469,43 @@
 
         async startARSession() {
             if (!navigator.xr) {
-                throw new Error('WebXR not supported');
+                throw new Error('WebXR not supported on this device');
             }
 
-            const session = await navigator.xr.requestSession('immersive-ar', {
-                requiredFeatures: ['hit-test'],
-                optionalFeatures: ['dom-overlay'],
-                domOverlay: { root: document.body }
-            });
+            // Try different configurations with fallbacks
+            const configs = [
+                // Most compatible - no required features
+                {
+                    optionalFeatures: ['hit-test', 'dom-overlay', 'light-estimation'],
+                    domOverlay: { root: document.body }
+                },
+                // Fallback - even more minimal
+                {
+                    optionalFeatures: ['dom-overlay'],
+                    domOverlay: { root: document.body }
+                },
+                // Last resort - absolute minimum
+                {
+                    optionalFeatures: []
+                }
+            ];
 
-            await this.renderer.xr.setSession(session);
-            return session;
+            let lastError;
+
+            for (const config of configs) {
+                try {
+                    console.log('Trying AR session with config:', config);
+                    const session = await navigator.xr.requestSession('immersive-ar', config);
+                    await this.renderer.xr.setSession(session);
+                    console.log('AR session started successfully!');
+                    return session;
+                } catch (error) {
+                    console.warn('Config failed:', error.message);
+                    lastError = error;
+                }
+            }
+
+            throw lastError || new Error('All AR configurations failed');
         }
 
         handleResize() {
@@ -744,10 +514,6 @@
             this.camera.aspect = width / height;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(width, height);
-        }
-
-        getStats() {
-            return this.stats;
         }
     }
 
@@ -761,8 +527,8 @@
         const [selectedObject, setSelectedObject] = useState('cube');
         const [objectSize, setObjectSize] = useState(1);
         const [placedObjects, setPlacedObjects] = useState(0);
-        const [showInstructions, setShowInstructions] = useState(true);
-        const [stats, setStats] = useState(Monoid.Stats.empty());
+        const [error, setError] = useState(null);
+        const [diagnostics, setDiagnostics] = useState(null);
 
         const canvasRef = useRef(null);
         const sceneManagerRef = useRef(null);
@@ -781,10 +547,40 @@
 
             sceneManagerRef.current = new ARSceneManager(canvasRef.current);
 
-            // Check AR support
-            if ('xr' in navigator) {
-                navigator.xr.isSessionSupported('immersive-ar').then(setArSupported);
-            }
+            // Comprehensive diagnostics
+            const runDiagnostics = async () => {
+                const diag = {
+                    hasXR: 'xr' in navigator,
+                    userAgent: navigator.userAgent,
+                    isSecure: window.location.protocol === 'https:',
+                    hasCamera: false,
+                    arSupported: false
+                };
+
+                if ('xr' in navigator) {
+                    try {
+                        diag.arSupported = await navigator.xr.isSessionSupported('immersive-ar');
+                        setArSupported(diag.arSupported);
+                    } catch (e) {
+                        diag.arError = e.message;
+                    }
+                }
+
+                // Check camera
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        diag.hasCamera = true;
+                        stream.getTracks().forEach(track => track.stop());
+                    } catch (e) {
+                        diag.cameraError = e.message;
+                    }
+                }
+
+                setDiagnostics(diag);
+            };
+
+            runDiagnostics();
 
             // Resize handler
             const handleResize = () => {
@@ -795,53 +591,44 @@
 
             window.addEventListener('resize', handleResize);
 
-            // Stats update
-            const interval = setInterval(() => {
-                if (sceneManagerRef.current) {
-                    setStats(sceneManagerRef.current.getStats());
-                }
-            }, 1000);
-
-            // Add demo objects for preview
-            if (sceneManagerRef.current) {
-                const positions = [
-                    { x: -1, y: 0, z: -2 },
-                    { x: 0, y: 0.5, z: -2 },
-                    { x: 1, y: 0, z: -2 }
-                ];
-
-                Fold.foldl((_, pos) => {
-                    sceneManagerRef.current.addObject('sphere', 1, {
-                        position: pos,
-                        rotation: { x: 0, y: 0, z: 0 },
-                        scale: { x: 1, y: 1, z: 1 }
-                    });
-                    return null;
-                }, null, positions);
-            }
+            // Add demo objects
+            [
+                { x: -1, y: 0, z: -2 },
+                { x: 0, y: 0.5, z: -2 },
+                { x: 1, y: 0, z: -2 }
+            ].forEach(pos => {
+                sceneManagerRef.current.addObject('sphere', 1, pos);
+            });
 
             return () => {
                 window.removeEventListener('resize', handleResize);
-                clearInterval(interval);
             };
         }, []);
 
         const startAR = async () => {
+            setError(null);
             try {
                 await sceneManagerRef.current.startARSession();
                 setArActive(true);
-                setShowInstructions(false);
-            } catch (error) {
-                alert(`AR Error: ${error.message}\n\nMake sure you:\n1. Are using HTTPS (GitHub Pages ✓)\n2. Have a compatible device\n3. Granted camera permission`);
+            } catch (err) {
+                console.error('AR Error:', err);
+                setError({
+                    message: err.message,
+                    type: err.name
+                });
             }
         };
 
         const placeObject = () => {
-            if (sceneManagerRef.current && arActive) {
-                const placed = sceneManagerRef.current.placeObjectAtReticle(selectedObject, objectSize);
-                if (placed) {
-                    setPlacedObjects(prev => prev + 1);
-                }
+            if (sceneManagerRef.current) {
+                // In non-AR mode, place in front of camera
+                const pos = {
+                    x: (Math.random() - 0.5) * 2,
+                    y: (Math.random() - 0.5) * 2,
+                    z: -3
+                };
+                sceneManagerRef.current.addObject(selectedObject, objectSize, pos);
+                setPlacedObjects(prev => prev + 1);
             }
         };
 
@@ -856,7 +643,7 @@
             <div className="app-container">
                 <div className="header">
                     <h1>📱 AR Object Placer</h1>
-                    <p>Place 3D objects in your real world</p>
+                    <p>Place 3D objects in your world</p>
                 </div>
 
                 <div className="preview-container">
@@ -869,53 +656,88 @@
                                 AR Active
                             </div>
                         )}
-                        {arActive && (
-                            <div className="object-count">
-                                📦 {placedObjects}
-                            </div>
-                        )}
                     </div>
                 </div>
 
                 <div className="bottom-sheet">
                     <div className="sheet-handle"></div>
 
-                    {!arActive && (
-                        <div className="control-section">
-                            <button
-                                className="btn btn-ar"
-                                onClick={startAR}
-                                disabled={!arSupported}
-                            >
-                                📱 Start AR Experience
-                            </button>
-                            {!arSupported && (
-                                <div className="info-panel">
-                                    <h4>⚠️ AR Not Available</h4>
-                                    <p>Your device/browser doesn't support WebXR AR. This works on:</p>
-                                    <p>• Android Chrome (ARCore devices)</p>
-                                    <p>• iOS Safari 15+ (iPhone 6S+)</p>
-                                </div>
-                            )}
+                    {error && (
+                        <div className="error-panel">
+                            <h4>❌ AR Error: {error.type}</h4>
+                            <p><strong>Message:</strong> {error.message}</p>
+
+                            <p><strong>Common Solutions:</strong></p>
+                            <ul>
+                                <li><strong>Android:</strong> Use Chrome 79+ on ARCore-supported device</li>
+                                <li><strong>iOS:</strong> Use Safari on iOS 15+ (iPhone 6S or newer)</li>
+                                <li>Grant camera permissions in browser settings</li>
+                                <li>Make sure you're on HTTPS (GitHub Pages ✓)</li>
+                                <li>Try reloading the page</li>
+                            </ul>
+
+                            <p style={{ marginTop: '10px', fontWeight: 'bold' }}>
+                                You can still place objects in 3D preview mode!
+                            </p>
+                        </div>
+                    )}
+
+                    {diagnostics && (
+                        <div className="diagnostic-info">
+                            <h4>🔍 Device Diagnostics</h4>
+                            <p>WebXR API: {diagnostics.hasXR ? '✅ Available' : '❌ Not Available'}</p>
+                            <p>AR Supported: {diagnostics.arSupported ? '✅ Yes' : '❌ No'}</p>
+                            <p>HTTPS: {diagnostics.isSecure ? '✅ Secure' : '❌ Not Secure'}</p>
+                            <p>Camera: {diagnostics.hasCamera ? '✅ Accessible' : '❌ No Access'}</p>
+                            {diagnostics.arError && <p>Error: {diagnostics.arError}</p>}
                         </div>
                     )}
 
                     <div className="control-section">
+                        {!arActive && (
+                            <>
+                                <button
+                                    className="btn btn-ar"
+                                    onClick={startAR}
+                                    disabled={!arSupported}
+                                >
+                                    📱 {arSupported ? 'Start AR Experience' : 'AR Not Available'}
+                                </button>
+
+                                {!arSupported && (
+                                    <button
+                                        className="btn btn-primary"
+                                        onClick={placeObject}
+                                    >
+                                        ➕ Place in 3D Preview Mode
+                                    </button>
+                                )}
+                            </>
+                        )}
+
+                        {arActive && (
+                            <button
+                                className="btn btn-primary"
+                                onClick={placeObject}
+                            >
+                                ➕ Place Object
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="control-section">
                         <h3>🎲 Select Object</h3>
                         <div className="object-grid">
-                            {Functor.map(
-                                obj => (
-                                    <div
-                                        key={obj.type}
-                                        className={`object-card ${selectedObject === obj.type ? 'selected' : ''}`}
-                                        onClick={() => setSelectedObject(obj.type)}
-                                    >
-                                        <div className="object-icon">{obj.icon}</div>
-                                        <div className="object-name">{obj.name}</div>
-                                    </div>
-                                ),
-                                objects
-                            )}
+                            {objects.map(obj => (
+                                <div
+                                    key={obj.type}
+                                    className={`object-card ${selectedObject === obj.type ? 'selected' : ''}`}
+                                    onClick={() => setSelectedObject(obj.type)}
+                                >
+                                    <div className="object-icon">{obj.icon}</div>
+                                    <div className="object-name">{obj.name}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -938,74 +760,20 @@
                         </div>
                     </div>
 
-                    {arActive && (
-                        <div className="control-section">
-                            <h3>⚡ Actions</h3>
-                            <button className="btn btn-primary" onClick={placeObject}>
-                                ➕ Place Object
-                            </button>
-                            <button className="btn btn-danger" onClick={clearAll}>
-                                🗑️ Clear All
-                            </button>
-                        </div>
-                    )}
-
                     <div className="control-section">
-                        <h3>📊 Stats</h3>
-                        <div className="stats-row">
-                            <div className="stat-box">
-                                <div className="stat-value">{placedObjects}</div>
-                                <div className="stat-label">Placed</div>
-                            </div>
-                            <div className="stat-box">
-                                <div className="stat-value">{stats.objects}</div>
-                                <div className="stat-label">Total</div>
-                            </div>
-                            <div className="stat-box">
-                                <div className="stat-value">{arActive ? '✓' : '✗'}</div>
-                                <div className="stat-label">AR Mode</div>
-                            </div>
-                        </div>
+                        <button className="btn btn-danger" onClick={clearAll}>
+                            🗑️ Clear All ({placedObjects} objects)
+                        </button>
                     </div>
                 </div>
 
-                {arActive && (
-                    <div className="fab-container">
-                        <button className="fab fab-add" onClick={placeObject}>
-                            ➕
-                        </button>
-                        <button className="fab fab-clear" onClick={clearAll}>
-                            🗑️
-                        </button>
-                        <button className="fab fab-info" onClick={() => setShowInstructions(true)}>
-                            ❓
-                        </button>
-                    </div>
-                )}
-
-                {showInstructions && (
-                    <div className="instructions-overlay" onClick={() => setShowInstructions(false)}>
-                        <div className="instructions-content" onClick={(e) => e.stopPropagation()}>
-                            <h2>📱 How to Use AR</h2>
-                            <ol>
-                                <li><strong>Click "Start AR"</strong> to enter AR mode</li>
-                                <li><strong>Point your camera</strong> at a flat surface (floor/table)</li>
-                                <li><strong>Look for the white circle</strong> - that's where objects will appear</li>
-                                <li><strong>Select an object type</strong> from the grid</li>
-                                <li><strong>Adjust size</strong> with the slider</li>
-                                <li><strong>Tap "Place Object"</strong> or use the ➕ FAB</li>
-                                <li><strong>Walk around</strong> to see objects from different angles!</li>
-                            </ol>
-                            <button className="btn btn-primary" onClick={() => setShowInstructions(false)}>
-                                Got it! 👍
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                <div className="github-info">
-                    🎉 Hosted on GitHub Pages • Using WebXR + Three.js + React<br/>
-                    <strong>FP Patterns:</strong> Monoids (Transform3D, Stats), Functors (map3D), Folds (scene operations)
+                <div className="fab-container">
+                    <button className="fab fab-add" onClick={placeObject}>
+                        ➕
+                    </button>
+                    <button className="fab fab-clear" onClick={clearAll}>
+                        🗑️
+                    </button>
                 </div>
             </div>
         );
