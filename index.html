@@ -1,46 +1,1017 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
-</head>
-<body>
--- react dom include
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-
-<script>
-
-    const e = React.createElement;
-
-    class LikeButton extends React.Component {
-        constructor(props) {
-            super(props);
-            this.state = {liked: false};
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>AR Object Placer - Mobile</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        render() {
-            if (this.state.liked) {
-                return 'You liked this.';
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+            touch-action: pan-y;
+        }
+
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 8px;
+            font-weight: 900;
+        }
+
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .preview-container {
+            flex: 1;
+            position: relative;
+            min-height: 50vh;
+        }
+
+        #ar-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .status-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .status-badge {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .status-ar {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .pulse {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.5); }
+        }
+
+        .object-count {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Bottom Sheet Controls */
+        .bottom-sheet {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px 30px 0 0;
+            padding: 20px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+            color: #1e293b;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: #cbd5e1;
+            border-radius: 3px;
+            margin: 0 auto 20px;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+        }
+
+        .control-section h3 {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        /* Big Touch-Friendly Buttons */
+        .btn {
+            width: 100%;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-ar {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            font-size: 18px;
+            padding: 22px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            transform: none !important;
+        }
+
+        /* Object Grid */
+        .object-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .object-card {
+            aspect-ratio: 1;
+            background: white;
+            border: 3px solid transparent;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            touch-action: manipulation;
+        }
+
+        .object-card:active {
+            transform: scale(0.95);
+        }
+
+        .object-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #ede9fe 0%, #fae8ff 100%);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .object-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+
+        .object-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .object-card.selected .object-name {
+            color: #667eea;
+        }
+
+        /* Size Slider */
+        .slider-container {
+            margin-top: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .slider-value {
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .info-panel h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-panel p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Instructions Overlay */
+        .instructions-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .instructions-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            color: #1e293b;
+        }
+
+        .instructions-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .instructions-content ol {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        .instructions-content li {
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        .instructions-content strong {
+            color: #667eea;
+        }
+
+        /* Floating Action Buttons */
+        .fab-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .fab {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+
+        .fab:active {
+            transform: scale(0.9);
+        }
+
+        .fab-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .fab-clear {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .fab-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        /* Scrollbar */
+        .bottom-sheet::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .bottom-sheet::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .bottom-sheet::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        /* Loading State */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        /* GitHub Pages Info */
+        .github-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .github-info a {
+            color: white;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    // ============================================
+    // FUNCTIONAL PROGRAMMING PRIMITIVES
+    // ============================================
+
+    const Monoid = {
+        Transform3D: {
+            empty: () => ({
+                position: { x: 0, y: 0, z: 0 },
+                rotation: { x: 0, y: 0, z: 0 },
+                scale: { x: 1, y: 1, z: 1 }
+            }),
+            concat: (a, b) => ({
+                position: {
+                    x: a.position.x + b.position.x,
+                    y: a.position.y + b.position.y,
+                    z: a.position.z + b.position.z
+                },
+                rotation: {
+                    x: a.rotation.x + b.rotation.x,
+                    y: a.rotation.y + b.rotation.y,
+                    z: a.rotation.z + b.rotation.z
+                },
+                scale: {
+                    x: a.scale.x * b.scale.x,
+                    y: a.scale.y * b.scale.y,
+                    z: a.scale.z * b.scale.z
+                }
+            })
+        },
+
+        Stats: {
+            empty: () => ({ objects: 0, placements: 0, interactions: 0 }),
+            concat: (a, b) => ({
+                objects: a.objects + b.objects,
+                placements: a.placements + b.placements,
+                interactions: a.interactions + b.interactions
+            })
+        }
+    };
+
+    const Functor = {
+        map: (f, arr) => arr.map(f),
+        map3D: (f, objects) => objects.map(obj => ({
+            ...obj,
+            transform: f(obj.transform)
+        }))
+    };
+
+    const Fold = {
+        foldl: (f, init, arr) => arr.reduce(f, init),
+        foldMap: (monoid, f, arr) =>
+            arr.map(f).reduce(monoid.concat, monoid.empty())
+    };
+
+    // ============================================
+    // AR SCENE MANAGER
+    // ============================================
+
+    class ARSceneManager {
+        constructor(canvas) {
+            this.canvas = canvas;
+            this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+
+            this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            this.renderer.setPixelRatio(window.devicePixelRatio);
+            this.renderer.xr.enabled = true;
+
+            this.objects = [];
+            this.reticle = null;
+            this.hitTestSource = null;
+            this.hitTestSourceRequested = false;
+
+            this.stats = Monoid.Stats.empty();
+
+            this.setupScene();
+            this.animate();
+        }
+
+        setupScene() {
+            this.camera.position.z = 5;
+
+            // Lighting using fold
+            const lights = [
+                { type: 'ambient', color: 0xffffff, intensity: 1 },
+                { type: 'directional', color: 0xffffff, intensity: 1, position: [5, 5, 5] }
+            ];
+
+            Fold.foldl((_, light) => {
+                if (light.type === 'ambient') {
+                    this.scene.add(new THREE.AmbientLight(light.color, light.intensity));
+                } else if (light.type === 'directional') {
+                    const dirLight = new THREE.DirectionalLight(light.color, light.intensity);
+                    dirLight.position.set(...light.position);
+                    this.scene.add(dirLight);
+                }
+                return null;
+            }, null, lights);
+
+            // Create reticle for AR placement
+            const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
+            const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+            this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
+            this.reticle.matrixAutoUpdate = false;
+            this.reticle.visible = false;
+            this.scene.add(this.reticle);
+        }
+
+        addObject(type, size, transform = Monoid.Transform3D.empty()) {
+            const geometries = {
+                cube: new THREE.BoxGeometry(0.2, 0.2, 0.2),
+                sphere: new THREE.SphereGeometry(0.1, 32, 32),
+                cylinder: new THREE.CylinderGeometry(0.1, 0.1, 0.2, 32),
+                torus: new THREE.TorusGeometry(0.1, 0.04, 16, 100),
+                cone: new THREE.ConeGeometry(0.1, 0.2, 32),
+                pyramid: new THREE.TetrahedronGeometry(0.15)
+            };
+
+            const geometry = geometries[type];
+            const material = new THREE.MeshPhongMaterial({
+                color: Math.random() * 0xffffff,
+                shininess: 100
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+
+            // Apply transform
+            mesh.position.set(transform.position.x, transform.position.y, transform.position.z);
+            mesh.rotation.set(transform.rotation.x, transform.rotation.y, transform.rotation.z);
+            mesh.scale.multiplyScalar(size);
+
+            this.scene.add(mesh);
+            this.objects.push({ mesh, type, transform });
+
+            this.stats = Monoid.Stats.concat(this.stats, {
+                ...Monoid.Stats.empty(),
+                objects: 1,
+                placements: 1
+            });
+
+            return mesh;
+        }
+
+        placeObjectAtReticle(type, size) {
+            if (this.reticle.visible) {
+                const transform = {
+                    position: {
+                        x: this.reticle.position.x,
+                        y: this.reticle.position.y,
+                        z: this.reticle.position.z
+                    },
+                    rotation: { x: 0, y: 0, z: 0 },
+                    scale: { x: 1, y: 1, z: 1 }
+                };
+
+                return this.addObject(type, size, transform);
+            }
+            return null;
+        }
+
+        clearObjects() {
+            Fold.foldl((_, obj) => {
+                this.scene.remove(obj.mesh);
+                obj.mesh.geometry.dispose();
+                obj.mesh.material.dispose();
+                return null;
+            }, null, this.objects);
+
+            this.objects = [];
+        }
+
+        updateObjects(deltaTime) {
+            this.objects = Functor.map3D(
+                (transform) => ({
+                    ...transform,
+                    rotation: {
+                        x: transform.rotation.x,
+                        y: transform.rotation.y + deltaTime * 0.5,
+                        z: transform.rotation.z
+                    }
+                }),
+                this.objects
+            );
+
+            Fold.foldl((_, obj) => {
+                obj.mesh.rotation.y = obj.transform.rotation.y;
+                return null;
+            }, null, this.objects);
+        }
+
+        animate() {
+            this.renderer.setAnimationLoop((time, frame) => {
+                if (frame) {
+                    // AR mode - handle hit testing
+                    const referenceSpace = this.renderer.xr.getReferenceSpace();
+                    const session = this.renderer.xr.getSession();
+
+                    if (!this.hitTestSourceRequested && session) {
+                        session.requestReferenceSpace('viewer').then((referenceSpace) => {
+                            session.requestHitTestSource({ space: referenceSpace }).then((source) => {
+                                this.hitTestSource = source;
+                            });
+                        });
+                        this.hitTestSourceRequested = true;
+                    }
+
+                    if (this.hitTestSource && frame) {
+                        const hitTestResults = frame.getHitTestResults(this.hitTestSource);
+
+                        if (hitTestResults.length > 0) {
+                            const hit = hitTestResults[0];
+                            const pose = hit.getPose(referenceSpace);
+
+                            this.reticle.visible = true;
+                            this.reticle.matrix.fromArray(pose.transform.matrix);
+                        } else {
+                            this.reticle.visible = false;
+                        }
+                    }
+                } else {
+                    // Non-AR mode - animate objects
+                    const deltaTime = time * 0.001;
+                    this.updateObjects(deltaTime);
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            });
+        }
+
+        async startARSession() {
+            if (!navigator.xr) {
+                throw new Error('WebXR not supported');
             }
 
-            return e(
-                'button',
-                {onClick: () => this.setState({liked: true})},
-                'Like'
-            );
+            const session = await navigator.xr.requestSession('immersive-ar', {
+                requiredFeatures: ['hit-test'],
+                optionalFeatures: ['dom-overlay'],
+                domOverlay: { root: document.body }
+            });
+
+            await this.renderer.xr.setSession(session);
+            return session;
+        }
+
+        handleResize() {
+            const width = this.canvas.clientWidth;
+            const height = this.canvas.clientHeight;
+            this.camera.aspect = width / height;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(width, height);
+        }
+
+        getStats() {
+            return this.stats;
         }
     }
 
-    const domContainer = document.querySelector('#like_button_container');
-    ReactDOM.render(e(LikeButton), domContainer);
+    // ============================================
+    // REACT APP
+    // ============================================
+
+    function MobileARApp() {
+        const [arSupported, setArSupported] = useState(false);
+        const [arActive, setArActive] = useState(false);
+        const [selectedObject, setSelectedObject] = useState('cube');
+        const [objectSize, setObjectSize] = useState(1);
+        const [placedObjects, setPlacedObjects] = useState(0);
+        const [showInstructions, setShowInstructions] = useState(true);
+        const [stats, setStats] = useState(Monoid.Stats.empty());
+
+        const canvasRef = useRef(null);
+        const sceneManagerRef = useRef(null);
+
+        const objects = [
+            { type: 'cube', icon: '🟦', name: 'Cube' },
+            { type: 'sphere', icon: '🔵', name: 'Sphere' },
+            { type: 'cylinder', icon: '🛢️', name: 'Cylinder' },
+            { type: 'torus', icon: '🍩', name: 'Torus' },
+            { type: 'cone', icon: '🔺', name: 'Cone' },
+            { type: 'pyramid', icon: '💎', name: 'Pyramid' }
+        ];
+
+        useEffect(() => {
+            if (!canvasRef.current) return;
+
+            sceneManagerRef.current = new ARSceneManager(canvasRef.current);
+
+            // Check AR support
+            if ('xr' in navigator) {
+                navigator.xr.isSessionSupported('immersive-ar').then(setArSupported);
+            }
+
+            // Resize handler
+            const handleResize = () => {
+                if (sceneManagerRef.current) {
+                    sceneManagerRef.current.handleResize();
+                }
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            // Stats update
+            const interval = setInterval(() => {
+                if (sceneManagerRef.current) {
+                    setStats(sceneManagerRef.current.getStats());
+                }
+            }, 1000);
+
+            // Add demo objects for preview
+            if (sceneManagerRef.current) {
+                const positions = [
+                    { x: -1, y: 0, z: -2 },
+                    { x: 0, y: 0.5, z: -2 },
+                    { x: 1, y: 0, z: -2 }
+                ];
+
+                Fold.foldl((_, pos) => {
+                    sceneManagerRef.current.addObject('sphere', 1, {
+                        position: pos,
+                        rotation: { x: 0, y: 0, z: 0 },
+                        scale: { x: 1, y: 1, z: 1 }
+                    });
+                    return null;
+                }, null, positions);
+            }
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                clearInterval(interval);
+            };
+        }, []);
+
+        const startAR = async () => {
+            try {
+                await sceneManagerRef.current.startARSession();
+                setArActive(true);
+                setShowInstructions(false);
+            } catch (error) {
+                alert(`AR Error: ${error.message}\n\nMake sure you:\n1. Are using HTTPS (GitHub Pages ✓)\n2. Have a compatible device\n3. Granted camera permission`);
+            }
+        };
+
+        const placeObject = () => {
+            if (sceneManagerRef.current && arActive) {
+                const placed = sceneManagerRef.current.placeObjectAtReticle(selectedObject, objectSize);
+                if (placed) {
+                    setPlacedObjects(prev => prev + 1);
+                }
+            }
+        };
+
+        const clearAll = () => {
+            if (sceneManagerRef.current) {
+                sceneManagerRef.current.clearObjects();
+                setPlacedObjects(0);
+            }
+        };
+
+        return (
+            <div className="app-container">
+                <div className="header">
+                    <h1>📱 AR Object Placer</h1>
+                    <p>Place 3D objects in your real world</p>
+                </div>
+
+                <div className="preview-container">
+                    <canvas ref={canvasRef} id="ar-canvas" />
+
+                    <div className="status-overlay">
+                        {arActive && (
+                            <div className="status-badge status-ar">
+                                <div className="pulse"></div>
+                                AR Active
+                            </div>
+                        )}
+                        {arActive && (
+                            <div className="object-count">
+                                📦 {placedObjects}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="bottom-sheet">
+                    <div className="sheet-handle"></div>
+
+                    {!arActive && (
+                        <div className="control-section">
+                            <button
+                                className="btn btn-ar"
+                                onClick={startAR}
+                                disabled={!arSupported}
+                            >
+                                📱 Start AR Experience
+                            </button>
+                            {!arSupported && (
+                                <div className="info-panel">
+                                    <h4>⚠️ AR Not Available</h4>
+                                    <p>Your device/browser doesn't support WebXR AR. This works on:</p>
+                                    <p>• Android Chrome (ARCore devices)</p>
+                                    <p>• iOS Safari 15+ (iPhone 6S+)</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="control-section">
+                        <h3>🎲 Select Object</h3>
+                        <div className="object-grid">
+                            {Functor.map(
+                                obj => (
+                                    <div
+                                        key={obj.type}
+                                        className={`object-card ${selectedObject === obj.type ? 'selected' : ''}`}
+                                        onClick={() => setSelectedObject(obj.type)}
+                                    >
+                                        <div className="object-icon">{obj.icon}</div>
+                                        <div className="object-name">{obj.name}</div>
+                                    </div>
+                                ),
+                                objects
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="control-section">
+                        <h3>📏 Object Size</h3>
+                        <div className="slider-container">
+                            <div className="slider-label">
+                                <span>Small</span>
+                                <span className="slider-value">{objectSize.toFixed(1)}x</span>
+                                <span>Large</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0.5"
+                                max="3"
+                                step="0.1"
+                                value={objectSize}
+                                onChange={(e) => setObjectSize(parseFloat(e.target.value))}
+                            />
+                        </div>
+                    </div>
+
+                    {arActive && (
+                        <div className="control-section">
+                            <h3>⚡ Actions</h3>
+                            <button className="btn btn-primary" onClick={placeObject}>
+                                ➕ Place Object
+                            </button>
+                            <button className="btn btn-danger" onClick={clearAll}>
+                                🗑️ Clear All
+                            </button>
+                        </div>
+                    )}
+
+                    <div className="control-section">
+                        <h3>📊 Stats</h3>
+                        <div className="stats-row">
+                            <div className="stat-box">
+                                <div className="stat-value">{placedObjects}</div>
+                                <div className="stat-label">Placed</div>
+                            </div>
+                            <div className="stat-box">
+                                <div className="stat-value">{stats.objects}</div>
+                                <div className="stat-label">Total</div>
+                            </div>
+                            <div className="stat-box">
+                                <div className="stat-value">{arActive ? '✓' : '✗'}</div>
+                                <div className="stat-label">AR Mode</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {arActive && (
+                    <div className="fab-container">
+                        <button className="fab fab-add" onClick={placeObject}>
+                            ➕
+                        </button>
+                        <button className="fab fab-clear" onClick={clearAll}>
+                            🗑️
+                        </button>
+                        <button className="fab fab-info" onClick={() => setShowInstructions(true)}>
+                            ❓
+                        </button>
+                    </div>
+                )}
+
+                {showInstructions && (
+                    <div className="instructions-overlay" onClick={() => setShowInstructions(false)}>
+                        <div className="instructions-content" onClick={(e) => e.stopPropagation()}>
+                            <h2>📱 How to Use AR</h2>
+                            <ol>
+                                <li><strong>Click "Start AR"</strong> to enter AR mode</li>
+                                <li><strong>Point your camera</strong> at a flat surface (floor/table)</li>
+                                <li><strong>Look for the white circle</strong> - that's where objects will appear</li>
+                                <li><strong>Select an object type</strong> from the grid</li>
+                                <li><strong>Adjust size</strong> with the slider</li>
+                                <li><strong>Tap "Place Object"</strong> or use the ➕ FAB</li>
+                                <li><strong>Walk around</strong> to see objects from different angles!</li>
+                            </ol>
+                            <button className="btn btn-primary" onClick={() => setShowInstructions(false)}>
+                                Got it! 👍
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                <div className="github-info">
+                    🎉 Hosted on GitHub Pages • Using WebXR + Three.js + React<br/>
+                    <strong>FP Patterns:</strong> Monoids (Transform3D, Stats), Functors (map3D), Folds (scene operations)
+                </div>
+            </div>
+        );
+    }
+
+    ReactDOM.render(<MobileARApp />, document.getElementById('root'));
 </script>
-
-<h2> Pure Docs</h2>
-
-// simple commit
-
-
 </body>
 </html>
